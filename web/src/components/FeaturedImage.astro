@@ -1,0 +1,23 @@
+---
+const imageData = Astro.props.image;
+if (!imageData) {
+  return null;
+}
+
+
+
+const src = imageData.source_url;
+const alt = imageData.alt_text || "";
+const width = imageData.media_details.width;
+const height = imageData.media_details.height;
+const loading = Astro.props.loading || "lazy";
+---
+
+<img
+  src={src}
+  alt={alt}
+  width={width}
+  height={height}
+  loading={loading}
+  class={Astro.props.class}
+/>

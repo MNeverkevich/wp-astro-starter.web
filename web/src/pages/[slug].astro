@@ -1,0 +1,27 @@
+---
+import { getPage, getPages, getHomePageData } from "../lib/api";
+
+import Layout from '../layouts/Layout.astro';
+import FlexibleContent from '../components/FlexibleContent.astro';
+
+const { slug } = Astro.params;
+const [page] = await getPage(slug);
+
+export async function getStaticPaths() {
+  const pages = await getPages();
+  const homePage = await getHomePageData();
+  return pages
+    .filter((page: any) => page.slug !== homePage.slug)
+    .map((page: any) => ({
+      params: { slug: page.slug },
+      props: { page: page },
+    }));
+}
+
+if (page.acf.page_settings?.add_redirect && page.acf.page_settings?.redirect_url) {
+  return Astro.redirect(page.acf.page_settings.redirect_url);
+}
+---
+<Layout title={page.title.rendered} yoast_head={page.yoast_head} >
+  <FlexibleContent page={page} />
+</Layout>

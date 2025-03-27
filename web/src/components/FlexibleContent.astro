@@ -1,0 +1,24 @@
+---
+import Hero from '../modules/Hero.astro';
+import CTA from '../modules/CTA.astro';
+import FeaturedPosts from '../modules/FeaturedPosts.astro';
+
+const page = Astro.props.page;
+---
+
+<div class="main">
+  {
+    page.acf.flexible_content.map((section: any) => {
+      switch (section.acf_fc_layout) {
+        case 'hero':
+          return <Hero data={section} />;
+        case 'cta':
+          return <CTA data={section} />;
+        case 'featured_posts':
+          return <FeaturedPosts data={section} />;
+        default:
+          return null;
+      }
+    })
+  }
+</div>

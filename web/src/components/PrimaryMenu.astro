@@ -1,0 +1,70 @@
+---
+import { primaryMenu } from "../lib/api";
+
+interface MenuItem {
+  ID: number;
+  title: string;
+  url: string;
+  menu_item_parent: string;
+}
+
+const menu = await primaryMenu();
+
+const hasChildren = (itemId: string) => {
+  return menu.some((item: MenuItem) => item.menu_item_parent === itemId);
+};
+
+const rootMenuItems = menu.filter((item: MenuItem) => item.menu_item_parent === "0");
+---
+
+<nav class="md:ml-auto flex flex-wrap items-center text-base justify-center">
+  <ul class="flex gap-4">
+    {
+      rootMenuItems.map((item: MenuItem) => (
+        <li
+          class:list={[
+            "hover:text-primary transition-colors relative",
+            hasChildren(item.ID.toString()) && "has-child group",
+          ]}
+        >
+          {hasChildren(item.ID.toString()) ? (
+            <button
+              class="font-medium cursor-pointer"
+              id={`menu-button-${item.ID}`}
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              {item.title}
+            </button>
+          ) : (
+            <a href={item.url} class="font-medium cursor-pointer">
+              {item.title}
+            </a>
+          )}
+          {hasChildren(item.ID.toString()) && (
+            <ul
+              class="invisible opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:visible absolute top-full left-0 bg-white shadow-lg rounded-md py-2 px-4 min-w-[280px] z-50"
+              role="menu"
+              aria-orientation="vertical"
+              aria-labelledby={`menu-button-${item.ID}`}
+              tabindex="-1"
+            >
+              {menu
+                .filter(
+                  (child: MenuItem) =>
+                    child.menu_item_parent === item.ID.toString(),
+                )
+                .map((child: MenuItem) => (
+                  <li>
+                    <a href={child.url} class="text-sm">
+                      {child.title}
+                    </a>
+                  </li>
+                ))}
+            </ul>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+</nav>

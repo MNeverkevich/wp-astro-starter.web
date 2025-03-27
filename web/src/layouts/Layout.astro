@@ -1,0 +1,38 @@
+---
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    {
+      Astro.props.yoast_head ? (
+        <Fragment set:html={Astro.props.yoast_head} />
+      ) : (
+        <title>{Astro.props.title}</title>
+      )
+    }
+  </head>
+  <Header />
+  <body>
+    <slot />
+  </body>
+  <Footer />
+
+  <style>
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+
+
+</html>

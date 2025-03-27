@@ -1,0 +1,76 @@
+---
+import { getPost, getCategory } from "../lib/api";
+import FeaturedImage from "../components/FeaturedImage.astro";
+const { title, featured_posts } = Astro.props.data;
+
+interface Post {
+  post_title: string;
+  post_excerpt: string;
+  link: string;
+  post_name: string;
+  categoryNames: Array<string>;
+  post_embedded: any;
+}
+
+const enhancedPosts = await Promise.all(
+  featured_posts.map(async (post: any) => {
+    const postEmbed = await getPost(post.post_name);
+    const categories = await Promise.all(
+      postEmbed[0].categories.map(async (categoryID: any) => {
+        const categoryEmbed = await getCategory(categoryID);
+        return categoryEmbed;
+      })
+    );
+
+    return {
+      ...post,
+      categoryNames: categories.map(cat => cat.name),
+      primaryCategory: categories.length > 0 ? categories[0].name : 'Uncategorized',
+      post_embedded: postEmbed[0]._embedded
+    };
+  })
+);
+
+---
+
+<section class="text-gray-600 body-font">
+  <div class="container py-24 mx-auto">
+    <div class="flex flex-col text-center w-full mb-12">
+      { title && <h2 class="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">{ title }</h2> }
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {  enhancedPosts.map((post: Post) => () => (
+        <div class="w-full">
+          <div class="h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
+            { enhancedPosts[0].post_embedded['wp:featuredmedia'][0] && (
+              <FeaturedImage image={ post.post_embedded['wp:featuredmedia'][0] } class="lg:h-48 md:h-36 w-full object-cover object-center" />
+            ) }
+            <div class="p-6">
+              { post.categoryNames && (
+                <div class="flex flex-wrap gap-2 mb-2">
+                  { post.categoryNames.map((category: string) => (
+                    <span class="tracking-widest text-xs title-font font-medium text-gray-400 uppercase">{ category }</span>
+                  )) }
+                </div>
+              ) }
+
+              { post.post_title && <h3 class="title-font text-lg font-medium text-gray-900 mb-3">{ post.post_title }</h3> }
+
+              {  post.post_excerpt && <p class="leading-relaxed mb-3">{ post.post_excerpt }</p> }
+              <div class="flex items-center flex-wrap ">
+                <a class="text-indigo-500 inline-flex items-center md:mb-2 lg:mb-0" href={"/blog/" + post.post_name}>Learn More
+                  <svg class="w-4 h-4 ml-2" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14"></path>
+                    <path d="M12 5l7 7-7 7"></path>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )) }
+
+    </div>
+  </div>
+</section>

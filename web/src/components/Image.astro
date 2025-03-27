@@ -1,0 +1,45 @@
+---
+const imageData = Astro.props.image;
+if (!imageData) {
+  return null;
+}
+
+const { sizes } = imageData;
+const srcsetArray = [];
+
+if (sizes.thumbnail) {
+  srcsetArray.push(`${sizes.thumbnail} ${sizes['thumbnail-width']}w`);
+}
+if (sizes.medium) {
+  srcsetArray.push(`${sizes.medium} ${sizes['medium-width']}w`);
+}
+if (sizes.medium_large) {
+  srcsetArray.push(`${sizes.medium_large} ${sizes['medium_large-width']}w`);
+}
+if (sizes.large) {
+  srcsetArray.push(`${sizes.large} ${sizes['large-width']}w`);
+}
+if (sizes['1536x1536']) {
+  srcsetArray.push(`${sizes['1536x1536']} ${sizes['1536x1536-width']}w`);
+}
+if (sizes['2048x2048']) {
+  srcsetArray.push(`${sizes['2048x2048']} ${sizes['2048x2048-width']}w`);
+}
+
+const srcset = srcsetArray.join(', ');
+const sizesAttr = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw";
+const src = sizes.large || sizes.medium_large || sizes.medium || sizes.thumbnail;
+const alt = imageData.alt || "";
+const loading = Astro.props.loading || "lazy";
+---
+
+<img
+  src={src}
+  srcset={srcset}
+  sizes={sizesAttr}
+  alt={alt}
+  loading={loading}
+  width={sizes['large-width'] || sizes['medium-width'] || ""}
+  height={sizes['large-height'] || sizes['medium-height'] || ""}
+  class={Astro.props.class}
+/>

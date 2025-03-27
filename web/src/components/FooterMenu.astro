@@ -1,0 +1,23 @@
+---
+import { footerMenu } from "../lib/api";
+
+interface MenuItem {
+  ID: number;
+  title: string;
+  url: string;
+}
+
+const menu = await footerMenu();
+---
+
+<nav class="md:ml-auto flex flex-wrap items-center text-base justify-center">
+  <ul class="flex gap-4">
+    {
+      menu.map((item: MenuItem) => (
+        <li>
+          <a href={item.url}>{item.title}</a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>

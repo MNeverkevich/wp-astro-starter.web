@@ -1,0 +1,44 @@
+---
+import { getPosts, getAllPosts } from '../../lib/api';
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  const PAGES_COUNT = 9;
+  const posts = await getAllPosts();
+  const pages = Math.ceil(posts.length / PAGES_COUNT);
+  return Array.from({ length: pages }, (_, i) => ({
+    params: { page: (i + 1).toString() },
+    props: {
+      posts: posts.slice(i * PAGES_COUNT, (i + 1) * PAGES_COUNT),
+      currentPage: i + 1,
+      totalPages: pages
+    },
+  }));
+}
+
+const { posts, currentPage, totalPages } = Astro.props;
+---
+
+<Layout title={'Blog Page'}>
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      { posts.map((post: any) => (
+        <div class="w-full p-8 border">
+          <p class="text-xl mb-4">{post.title.rendered}</p>
+          <div class="mb-3" set:html={post.excerpt.rendered}></div>
+          <a href={`/blog/${post.slug}`}>Read more</a>
+        </div>
+        ))
+      }
+    </div>
+
+    <div class="flex justify-center mt-8">
+      {currentPage > 1 && (
+        <a href={`/blog/${currentPage - 1}`} class="mx-2 px-4 py-2 bg-gray-200 rounded">Previous</a>
+      )}
+      {currentPage < totalPages && (
+        <a href={`/blog/${currentPage + 1}`} class="mx-2 px-4 py-2 bg-gray-200 rounded">Next</a>
+      )}
+    </div>
+  </div>
+</Layout>
