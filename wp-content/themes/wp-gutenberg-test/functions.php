@@ -27,6 +27,10 @@ function register_custom_menus() {
   );
 }
 
+add_filter('rest_url_prefix', function() {
+	return 'wpastroapi';
+});
+
 add_action( 'init', 'register_custom_menus' );
 
 function restrict_wp_frontend() {
