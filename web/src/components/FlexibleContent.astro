@@ -2,6 +2,7 @@
 import Hero from '../modules/Hero.astro';
 import CTA from '../modules/CTA.astro';
 import FeaturedPosts from '../modules/FeaturedPosts.astro';
+import ContactForm from '../modules/ContactForm.astro';
 
 const page = Astro.props.page;
 ---
@@ -16,6 +17,8 @@ const page = Astro.props.page;
           return <CTA data={section} />;
         case 'featured_posts':
           return <FeaturedPosts data={section} />;
+        case 'contact_form':
+          return <ContactForm data={section} />;
         default:
           return null;
       }

@@ -25,30 +25,45 @@ function acf_flexible_preview() {
     }
   </style>
   <script>
-    var appliedModules = [
-      'hero',
-      'cta',
-    ];
-    jQuery(document).ready(function($) {
-      if ($('.acf-field-67dc050979630').length > 0) {
-        $('a[data-name=add-layout]').click(function() {
-          showACFTooltipWait('.acf-tooltip li', function() {
-            Array.from(appliedModules).forEach(function(module) {
-              var moduleFromList = $('.acf-tooltip li a[data-layout=' + module + ']');
-              var img = new Image();
-              var imagePath = '<?php echo get_site_url(); ?>/wp-content/themes/wp-gutenberg-test/inc/previews/' + module + '.png';
-              var defaultImagePath = '<?php echo get_site_url(); ?>/wp-content/themes/wp-gutenberg-test/inc/previews/no-preview-image.png';
+    document.addEventListener('DOMContentLoaded', function() {
+      if (document.querySelector('.acf-field-67dc050979630')) {
+        const addLayoutButtons = document.querySelectorAll('a[data-name=add-layout]');
 
-              moduleFromList.append(
-                '<div class="imagePreview">' +
-                '<img src="' + imagePath + '" onerror="this.onerror=null;this.src=\'' + defaultImagePath + '\'" alt="' + module + '" width="300" height="200" loading="eager" />' +
-                '</div>'
-              );
-            })
+        addLayoutButtons.forEach(button => {
+          button.addEventListener('click', function() {
+            showACFTooltipWait('.acf-tooltip li', function() {
+              const moduleFromList = document.querySelectorAll('.acf-tooltip li');
+
+              moduleFromList.forEach(function(module) {
+                const moduleEl = module.querySelector('a');
+                const moduleName = moduleEl.getAttribute('data-layout');
+                const img = new Image();
+                const imagePath = '<?php echo get_site_url(); ?>/wp-content/themes/wp-gutenberg-test/inc/previews/' + moduleName + '.png';
+                const defaultImagePath = '<?php echo get_site_url(); ?>/wp-content/themes/wp-gutenberg-test/inc/previews/no-preview-image.png';
+
+                const previewDiv = document.createElement('div');
+                previewDiv.className = 'imagePreview';
+
+                const previewImg = document.createElement('img');
+                previewImg.src = imagePath;
+                previewImg.alt = moduleName;
+                previewImg.width = 300;
+                previewImg.height = 200;
+                previewImg.loading = 'eager';
+                previewImg.onerror = function() {
+                  this.onerror = null;
+                  this.src = defaultImagePath;
+                };
+
+                previewDiv.appendChild(previewImg);
+                moduleEl.appendChild(previewDiv);
+              });
+            });
           });
-        })
+        });
+
         var showACFTooltipWait = function(selector, callback) {
-          if (jQuery(selector).length) {
+          if (document.querySelectorAll(selector).length) {
             callback();
           } else {
             setTimeout(function() {
@@ -57,7 +72,7 @@ function acf_flexible_preview() {
           }
         };
       }
-    })
+    });
   </script>
 <?php
 }
