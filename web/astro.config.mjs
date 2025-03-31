@@ -6,8 +6,6 @@ const BASE_URL = process.env.SITE_DOMAIN;
 import tailwindcss from '@tailwindcss/vite';
 import playformCompress from '@playform/compress';
 
-import sitemap from '@astrojs/sitemap';
-
 // https://astro.build/config
 export default defineConfig({
   site: BASE_URL,
@@ -22,5 +20,5 @@ export default defineConfig({
     host: true,
   },
   output: 'static',
-  integrations: [playformCompress(), sitemap()],
+  integrations: [playformCompress()],
 });
