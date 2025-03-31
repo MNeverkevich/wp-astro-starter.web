@@ -4,8 +4,11 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import playformCompress from '@playform/compress';
 
+import sitemap from '@astrojs/sitemap';
+
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://wp-astro-test.web',
   vite: {
     plugins: [
       tailwindcss(),
@@ -17,5 +20,5 @@ export default defineConfig({
     host: true,
   },
   output: 'static',
-  integrations: [playformCompress()],
+  integrations: [playformCompress(), sitemap()],
 });
