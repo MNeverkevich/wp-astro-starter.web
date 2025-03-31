@@ -1,5 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import 'dotenv/config';
+const BASE_URL = process.env.SITE_DOMAIN;
 
 import tailwindcss from '@tailwindcss/vite';
 import playformCompress from '@playform/compress';
@@ -8,7 +10,7 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://wp-astro-test.web',
+  site: BASE_URL,
   vite: {
     plugins: [
       tailwindcss(),
