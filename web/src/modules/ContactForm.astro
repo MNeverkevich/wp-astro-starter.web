@@ -1,5 +1,20 @@
 ---
-const { title, description } = Astro.props.data;
+import 'dotenv/config';
+const BASE_URL = process.env.SITE_DOMAIN;
+const WP_REST_URL_PREFIX = process.env.WP_REST_URL_PREFIX;
+
+const { title, description, form } = Astro.props.data;
+
+let formHtml;
+try {
+  const response = await fetch(`${BASE_URL}/${WP_REST_URL_PREFIX}/wp/v2/form/${form[0].ID}`);
+  const data = await response.json();
+
+  formHtml = data.html;
+} catch (error) {
+  console.error(error);
+  formHtml = '<p>Couldn\'t load the form. Please try again later.</p>';
+}
 ---
 
 <section class="text-gray-600 body-font bg-gray-50">
@@ -8,20 +23,99 @@ const { title, description } = Astro.props.data;
       { title && <h2 class="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">{ title }</h2> }
       { description && <p class="lg:w-2/3 mx-auto leading-relaxed text-base">{ description }</p> }
     </div>
-    <form id="contact-form" class="flex flex-col gap-4 mx-auto px-8 sm:space-x-4 sm:space-y-0 space-y-4 sm:px-0 items-center max-w-160">
-      <div class="relative flex-grow w-full">
-        <label for="first-name" class="leading-7 text-sm text-gray-600">First Name</label>
-        <input type="text" id="first-name" name="first-name" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-transparent focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
-      </div>
-      <div class="relative flex-grow w-full">
-        <label for="last-name" class="leading-7 text-sm text-gray-600">Last Name</label>
-        <input type="text" id="last-name" name="last-name" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-transparent focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
-      </div>
-      <div class="relative flex-grow w-full">
-        <label for="email" class="leading-7 text-sm text-gray-600">Email</label>
-        <input type="email" id="email" name="email" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-transparent focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
-      </div>
-      <button class="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">Button</button>
-    </form>
+    <div class="contact-form" id="contact-form-container" set:html={formHtml}></div>
+
   </div>
 </section>
+
+<script define:vars={{ BASE_URL, WP_REST_URL_PREFIX }}>
+  window.APP_CONFIG = {
+    BASE_URL: BASE_URL,
+    WP_REST_URL_PREFIX: WP_REST_URL_PREFIX
+  };
+</script>
+
+<script>
+  declare global {
+    interface Window {
+      APP_CONFIG?: {
+        baseUrl: string;
+        [key: string]: any;
+      },
+
+      wpcf7?: {
+        init: () => void;
+        [key: string]: any;
+      };
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof window.wpcf7 !== 'undefined' && window.wpcf7.init) {
+      window.wpcf7.init();
+    }
+
+    const formID = document.querySelector('.wpcf7')?.getAttribute('data-wpcf7-id');
+    const form = document.querySelector('.contact-form .wpcf7-form') as HTMLFormElement;
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+
+      // Send the data to the server
+      const requestOptions: RequestInit = {
+        method: "POST",
+        body: formData,
+        redirect: "follow" as RequestRedirect
+      };
+      fetch(`${window.APP_CONFIG?.BASE_URL}/${window.APP_CONFIG?.WP_REST_URL_PREFIX}/contact-form-7/v1/contact-forms/${formID}/feedback`, requestOptions)
+        .then((response) => response.text())
+        .then((result) => {
+          console.log(result);
+          alert("Form submitted successfully!");
+          form.reset();
+        })
+        .catch((error) => console.error(error));
+    });
+  });
+</script>
+
+<style is:inline>
+  .contact-form {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .contact-form form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .contact-form input[type="text"],
+  .contact-form input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  .contact-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    min-height: 150px;
+    max-height: 300px;
+  }
+
+  .contact-form input[type="submit"] {
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+</style>

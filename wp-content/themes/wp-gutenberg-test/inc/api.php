@@ -23,7 +23,9 @@ add_filter('rest_endpoints', function ($endpoints) {
 		'/wp/v2/menus',
 		'/wp/v2/categories',
 		'/wp/v2/users',
-		'/wp/v2/home_page'
+		'/wp/v2/home_page',
+		'/wp/v2/form',
+		'/contact-form-7/v1/contact-forms/'
 	];
 
 	foreach ($endpoints as $route => $details) {
@@ -41,6 +43,23 @@ add_filter('rest_endpoints', function ($endpoints) {
 
 	return $endpoints;
 });
+
+add_action('rest_api_init', function() {
+	register_rest_route('wp/v2', '/form/(?P<id>\d+)', [
+			'methods'  => 'GET',
+			'callback' => 'get_contact_form_html',
+	]);
+});
+
+function get_contact_form_html($request) {
+	$form_id = $request['id'];
+	$html = do_shortcode('[contact-form-7 id="' . $form_id . '"]');
+	return rest_ensure_response(array(
+			'html' => $html
+	));
+}
+
+
 
 add_action('rest_api_init', function () {
 	register_rest_route('wp/v2/menus', '/primary-menu', array(
