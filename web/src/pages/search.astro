@@ -10,7 +10,7 @@ import Layout from '../layouts/Layout.astro';
     <h1 class="text-3xl font-bold mb-8">Search by Posts:</h1>
     <div class="mb-4">
       <form action="/search" method="GET">
-        <input type="text" name="q" placeholder="Search..." class="border p-2 rounded max-w-2xl w-full" />
+        <input type="text" name="q" placeholder="Search..." class="border p-2 rounded max-w-2xl w-full" required />
         <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer">Search</button>
       </form>
     </div>
