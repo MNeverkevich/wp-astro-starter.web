@@ -40,7 +40,7 @@ const enhancedPosts = await Promise.all(
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {  enhancedPosts.map((post: Post) => () => (
+      { enhancedPosts.map((post: Post) => () => (
         <div class="w-full">
           <div class="h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
             { enhancedPosts[0].post_embedded['wp:featuredmedia'][0] && (

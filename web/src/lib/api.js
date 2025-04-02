@@ -76,3 +76,7 @@ export async function footerMenu() {
 export async function getCategory(id) {
   return fetchApi(`/${WP_REST_URL_PREFIX}/wp/v2/categories/` + id);
 }
+
+export async function getOptionsInfo() {
+  return fetchApi(`/${WP_REST_URL_PREFIX}/acf/v3/options/options/`);
+}

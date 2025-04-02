@@ -1,11 +1,23 @@
 ---
 
 import FooterMenu from "../components/FooterMenu.astro";
+import { getOptionsInfo } from "../lib/api";
 
+const options = await getOptionsInfo();
 ---
 <footer class="text-gray-600 body-font">
-  <div class="container py-8 flex flex-wrap flex-col md:flex-row items-center">
-    <a class="title-font font-medium text-gray-900 mb-4 md:mb-0">Logo</a>
+  <div class="container py-8 flex flex-wrap flex-col md:flex-row gap-4">
+    <a href="/" class="title-font font-medium text-gray-900 mb-4 md:mb-0">Logo</a>
+    { ( options.acf.company_address && options.acf.company_phone ) && (
+      <div class="flex flex-col gap-2">
+        { options.acf.company_phone && (
+          <span class="text-sm">Phone: { options.acf.company_phone }</span>
+        ) }
+        {  options.acf.company_address && (
+          <span class="text-sm">Address: { options.acf.company_address }</span>
+        ) }
+      </div>
+    )}
     <FooterMenu/>
   </div>
 </footer>
