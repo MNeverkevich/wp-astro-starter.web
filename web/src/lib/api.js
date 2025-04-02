@@ -38,6 +38,7 @@ export async function getAllPosts() {
     const posts = await getPosts({
       per_page: postsPerPage,
       offset,
+      _embed: true,
     });
 
     if (posts.length === 0) {

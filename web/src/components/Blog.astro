@@ -1,5 +1,7 @@
 ---
 const { posts, currentPage, totalPages } = Astro.props;
+import FeaturedImage from './FeaturedImage.astro';
+
 ---
 <div class="container py-6">
   <h1 class="text-3xl font-bold mb-8">Blog</h1>
@@ -11,10 +13,17 @@ const { posts, currentPage, totalPages } = Astro.props;
   </div>
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
     { posts.map((post: any) => (
-      <div class="w-full p-8 border">
-        <p class="text-xl mb-4">{post.title.rendered}</p>
-        <div class="mb-3" set:html={post.excerpt.rendered}></div>
-        <a href={`/blog/${post.slug}`}>Read more</a>
+      <div class="w-full relative border border-gray-200 rounded-sm shadow-xs hover:shadow-sm transition-shadow duration-150 overflow-hidden">
+        { post.featured_media &&
+          <div class="overflow-hidden">
+            <FeaturedImage image={post._embedded['wp:featuredmedia'][0]} class="w-full object-cover object-center max-h-50" />
+          </div>
+        }
+        <div class="px-4 py-6">
+          <p class="text-xl mb-4">{post.title.rendered}</p>
+          <div class="mb-3" set:html={post.excerpt.rendered}></div>
+        </div>
+        <a class="absolute inset-0 size-full opacity-0" href={`/blog/${post.slug}`}>Read more</a>
       </div>
       ))
     }
