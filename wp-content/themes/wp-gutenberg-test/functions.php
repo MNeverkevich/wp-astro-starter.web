@@ -10,6 +10,8 @@ if ( ! defined( '_S_VERSION' ) ) {
     define( '_S_VERSION', '1.0.0' );
 }
 
+add_theme_support( 'post-thumbnails' );
+
 // Menus
 require get_template_directory() . '/inc/menus.php';
 

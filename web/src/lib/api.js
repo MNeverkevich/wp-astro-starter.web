@@ -29,7 +29,7 @@ export async function getPosts(attributes = {}) {
 }
 
 export async function getAllPosts() {
-  const postsPerPage = 100;
+  const postsPerPage = 9;
   let allPosts = [];
   let offset = 0;
   let hasMore = true;

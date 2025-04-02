@@ -61,8 +61,6 @@ function get_contact_form_html($request) {
 	));
 }
 
-
-
 add_action('rest_api_init', function () {
 	register_rest_route('wp/v2/menus', '/primary-menu', array(
 			'methods' => 'GET',

@@ -29,7 +29,7 @@ import Layout from '../layouts/Layout.astro';
   const searchInput = window.location.search.split('?q=')[1];
   const searchResultsContainer = document.querySelector('.search-results');
   const searchResults = document.createElement('div');
-  searchResults.classList.add('grid', 'grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3', 'gap-4');
+  searchResults.classList.add('grid', 'grid-cols-1', 'gap-4');
   searchResultsContainer?.appendChild(searchResults);
   if (searchInput) {
     const searchQuery = decodeURIComponent(searchInput);
@@ -39,7 +39,7 @@ import Layout from '../layouts/Layout.astro';
   }
 
   function search(searchQuery: string) {
-    fetch(`${window.APP_CONFIG?.BASE_URL}/${window.APP_CONFIG?.WP_REST_URL_PREFIX}/wp/v2/posts?search=${searchQuery}`)
+    fetch(`${window.APP_CONFIG?.BASE_URL}/${window.APP_CONFIG?.WP_REST_URL_PREFIX}/wp/v2/posts?search=${searchQuery}&per_page=99&_embed`)
     .then(response => response.json())
     .then(data => {
       if (data && data.length > 0) {
@@ -48,7 +48,7 @@ import Layout from '../layouts/Layout.astro';
           postElement.classList.add('w-full', 'p-8', 'border');
           postElement.innerHTML = `
             <p class="text-xl mb-4">${post.title.rendered}</p>
-            <div class="mb-3" set:html="${post.excerpt.rendered}"></div>
+            <div class="mb-3">${post.excerpt.rendered}</div>
             <a href="/blog/${post.slug}">Read more</a>
           `;
           searchResults.appendChild(postElement);

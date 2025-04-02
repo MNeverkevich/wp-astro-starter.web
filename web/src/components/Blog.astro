@@ -16,7 +16,7 @@ import FeaturedImage from './FeaturedImage.astro';
       <div class="w-full relative border border-gray-200 rounded-sm shadow-xs hover:shadow-sm transition-shadow duration-150 overflow-hidden">
         { post.featured_media &&
           <div class="overflow-hidden">
-            <FeaturedImage image={post._embedded['wp:featuredmedia'][0]} class="w-full object-cover object-center max-h-50" />
+            <FeaturedImage image={post._embedded['wp:featuredmedia'][0]} class="w-full object-cover object-center h-50" />
           </div>
         }
         <div class="px-4 py-6">

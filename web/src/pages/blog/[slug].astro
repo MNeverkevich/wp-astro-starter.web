@@ -1,13 +1,13 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { getPost, getPosts } from '../../lib/api';
+import { getAllPosts, getPost, getPosts } from '../../lib/api';
 import FeaturedImage from '../../components/FeaturedImage.astro';
 
 const { slug } = Astro.params;
 let [post] = await getPost(slug);
 
 export async function getStaticPaths() {
-  let posts = await getPosts();
+  let posts = await getAllPosts();
   return posts.map((post: any) => ({
     params: { slug: post.slug },
     props: { post: post },
