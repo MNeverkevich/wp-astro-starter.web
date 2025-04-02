@@ -57,8 +57,78 @@ try {
 
     const formID = document.querySelector('.wpcf7')?.getAttribute('data-wpcf7-id');
     const form = document.querySelector('.contact-form .wpcf7-form') as HTMLFormElement;
+
+    const validateForm = (form: HTMLFormElement): boolean => {
+      const formFields = form.querySelectorAll('input, textarea, select');
+      let isValid = true;
+
+      const existingErrors = form.querySelectorAll('.field-error-message');
+      existingErrors.forEach(error => error.remove());
+
+      formFields.forEach((field) => {
+        const inputField = field as HTMLInputElement;
+        let errorMessage = '';
+
+        if (inputField.getAttribute('aria-required') === 'true' && !inputField.value.trim()) {
+          errorMessage = 'This field is required';
+          isValid = false;
+        }
+        else if (inputField.value.trim()) {
+          if (inputField.type === 'email') {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(inputField.value.trim())) {
+              errorMessage = 'Please enter a valid email address';
+              isValid = false;
+            }
+          }
+
+          if (inputField.type === 'url') {
+            try {
+              new URL(inputField.value.trim());
+            } catch (_) {
+              errorMessage = 'Please enter a valid URL';
+              isValid = false;
+            }
+          }
+
+          if (inputField.type === 'number') {
+            if (isNaN(Number(inputField.value.trim()))) {
+              errorMessage = 'Please enter a valid number';
+              isValid = false;
+            }
+          }
+
+          if (inputField.type === 'tel') {
+            const telRegex = /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/;
+            if (!telRegex.test(inputField.value.trim())) {
+              errorMessage = 'Please enter a valid phone number';
+              isValid = false;
+            }
+          }
+        }
+
+        if (errorMessage) {
+          const errorElement = document.createElement('span');
+          errorElement.className = 'field-error-message';
+          errorElement.textContent = errorMessage;
+
+          inputField.parentNode?.insertBefore(errorElement, inputField.nextSibling);
+
+          inputField.style.borderColor = 'red';
+        } else {
+          inputField.style.borderColor = '';
+        }
+      });
+
+      return isValid;
+    };
+
     form.addEventListener('submit', (event) => {
       event.preventDefault();
+      if (!validateForm(form)) {
+        return; // Stop form submission if validation fails
+      }
+
       const formData = new FormData(form);
 
       // Send the data to the server
@@ -117,5 +187,11 @@ try {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+  }
+
+  .field-error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 2px;
   }
 </style>
