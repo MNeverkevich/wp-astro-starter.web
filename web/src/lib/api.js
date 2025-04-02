@@ -24,8 +24,8 @@ export async function getPost(slug) {
   return fetchApi(`/${WP_REST_URL_PREFIX}/wp/v2/posts`, { slug, _embed: true });
 }
 
-export async function getPosts(per_page = 10, offset = 0) {
-  return fetchApi(`/${WP_REST_URL_PREFIX}/wp/v2/posts`, { per_page, offset });
+export async function getPosts(attributes = {}) {
+  return fetchApi(`/${WP_REST_URL_PREFIX}/wp/v2/posts`, attributes);
 }
 
 export async function getAllPosts() {
@@ -35,7 +35,10 @@ export async function getAllPosts() {
   let hasMore = true;
 
   while (hasMore) {
-    const posts = await getPosts(postsPerPage, offset);
+    const posts = await getPosts({
+      per_page: postsPerPage,
+      offset,
+    });
 
     if (posts.length === 0) {
       hasMore = false;

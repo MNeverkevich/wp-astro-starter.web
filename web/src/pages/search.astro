@@ -1,0 +1,66 @@
+---
+const BASE_URL = process.env.SITE_DOMAIN;
+const WP_REST_URL_PREFIX = process.env.WP_REST_URL_PREFIX;
+
+import Layout from '../layouts/Layout.astro';
+
+---
+<Layout title="Search Page">
+  <div class="container py-6">
+    <h1 class="text-3xl font-bold mb-8">Search by Posts:</h1>
+    <div class="mb-4">
+      <form action="/search" method="GET">
+        <input type="text" name="q" placeholder="Search..." class="border p-2 rounded max-w-2xl w-full" />
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer">Search</button>
+      </form>
+    </div>
+    <div class="search-results"></div>
+  </div>
+</Layout>
+
+<script define:vars={{ BASE_URL, WP_REST_URL_PREFIX }}>
+  window.APP_CONFIG = {
+    BASE_URL: BASE_URL,
+    WP_REST_URL_PREFIX: WP_REST_URL_PREFIX
+  };
+</script>
+
+<script>
+  const searchInput = window.location.search.split('?q=')[1];
+  const searchResultsContainer = document.querySelector('.search-results');
+  const searchResults = document.createElement('div');
+  searchResults.classList.add('grid', 'grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3', 'gap-4');
+  searchResultsContainer?.appendChild(searchResults);
+  if (searchInput) {
+    const searchQuery = decodeURIComponent(searchInput);
+    search(searchQuery);
+    const formQ = document.querySelector('input[name="q"]') as HTMLInputElement;
+    formQ.value = searchQuery.replaceAll('+', ' ');
+  }
+
+  function search(searchQuery: string) {
+    fetch(`${window.APP_CONFIG?.BASE_URL}/${window.APP_CONFIG?.WP_REST_URL_PREFIX}/wp/v2/posts?search=${searchQuery}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data && data.length > 0) {
+        Array.from(data).forEach((post: any) => {
+          const postElement = document.createElement('div');
+          postElement.classList.add('w-full', 'p-8', 'border');
+          postElement.innerHTML = `
+            <p class="text-xl mb-4">${post.title.rendered}</p>
+            <div class="mb-3" set:html="${post.excerpt.rendered}"></div>
+            <a href="/blog/${post.slug}">Read more</a>
+          `;
+          searchResults.appendChild(postElement);
+        });
+      } else {
+        const noResultsElement = document.createElement('div');
+        noResultsElement.classList.add('w-full', 'p-8', 'border');
+        noResultsElement.innerHTML = `
+          <p class="text-xl mb-4">No results found for "${searchQuery}"</p>
+        `;
+        searchResults.appendChild(noResultsElement);
+      }
+    })
+  }
+</script>

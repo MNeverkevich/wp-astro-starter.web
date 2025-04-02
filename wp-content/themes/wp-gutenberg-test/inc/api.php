@@ -27,6 +27,7 @@ add_filter('rest_endpoints', function ($endpoints) {
 		'/wp/v2/form',
 		'/contact-form-7/v1/contact-forms/',
 		'/acf/v3/options',
+		'/wp/v2/search',
 	];
 
 	foreach ($endpoints as $route => $details) {
