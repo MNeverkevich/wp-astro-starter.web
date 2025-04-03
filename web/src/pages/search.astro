@@ -18,7 +18,7 @@ import Layout from '../layouts/Layout.astro';
   </div>
 </Layout>
 
-<script define:vars={{ BASE_URL, WP_REST_URL_PREFIX }}>
+<script is:inline define:vars={{ BASE_URL, WP_REST_URL_PREFIX }}>
   window.APP_CONFIG = {
     BASE_URL: BASE_URL,
     WP_REST_URL_PREFIX: WP_REST_URL_PREFIX
