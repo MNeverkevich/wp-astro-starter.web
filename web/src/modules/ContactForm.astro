@@ -123,8 +123,14 @@ try {
       return isValid;
     };
 
+    let isSubmitting = false;
     form.addEventListener('submit', (event) => {
       event.preventDefault();
+      if (isSubmitting) {
+        return;
+      }
+      isSubmitting = true;
+
       if (!validateForm(form)) {
         return; // Stop form submission if validation fails
       }
@@ -140,7 +146,7 @@ try {
       fetch(`${window.APP_CONFIG?.BASE_URL}/${window.APP_CONFIG?.WP_REST_URL_PREFIX}/contact-form-7/v1/contact-forms/${formID}/feedback`, requestOptions)
         .then((response) => response.text())
         .then((result) => {
-          console.log(result);
+          isSubmitting = false;
           alert("Form submitted successfully!");
           form.reset();
         })
