@@ -20,3 +20,6 @@ require get_template_directory() . '/inc/api.php';
 
 // Flexible Content Preview
 require get_template_directory() . '/inc/flexible-content-preview.php';
+
+// ACF Settings
+require get_template_directory() . '/inc/acf-settings.php';
