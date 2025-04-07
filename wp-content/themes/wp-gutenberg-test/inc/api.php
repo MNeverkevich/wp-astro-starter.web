@@ -101,3 +101,21 @@ add_action('rest_api_init', function () {
 		},
 	));
 });
+
+function modify_page_rest_api_response( $response, $post, $request ) {
+  if ( 'page' === $post->post_type && $post->post_parent ) {
+    $parent_page = get_post( $post->post_parent );
+
+    $parent_page_data = array(
+      'id' => $parent_page->ID,
+      'title' => get_the_title( $parent_page->ID ),
+      'slug' => $parent_page->post_name,
+      'url' => get_permalink( $parent_page->ID ),
+    );
+
+    $response->data['parent'] = $parent_page_data;
+  }
+
+  return $response;
+}
+add_filter( 'rest_prepare_page', 'modify_page_rest_api_response', 10, 3 );

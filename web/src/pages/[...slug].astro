@@ -4,18 +4,35 @@ import { getPage, getPages, getHomePageData } from "../lib/api";
 import Layout from '../layouts/Layout.astro';
 import FlexibleContent from '../components/FlexibleContent.astro';
 
-const { slug } = Astro.params;
+function getLastPathPart(input: unknown): string | null {
+  if (typeof input !== 'string') return null;
+
+  const clean = input.replace(/\/+$/, '');
+  const parts = clean.split('/');
+
+  return parts.length > 0 ? parts[parts.length - 1] : null;
+}
+
+const slug = getLastPathPart(Astro.params['slug'] as string);
 const [page] = await getPage(slug);
 
 export async function getStaticPaths() {
   const pages = await getPages();
   const homePage = await getHomePageData();
+
   return pages
     .filter((page: any) => page.slug !== homePage.slug)
-    .map((page: any) => ({
-      params: { slug: page.slug },
-      props: { page: page },
-    }));
+    .map((page: any) => {
+      let pageSlug = page.slug;
+
+      if (page.parent) {
+        pageSlug = `${page.parent.slug}/${pageSlug}`;
+      }
+      return {
+        params: { slug: pageSlug },
+        props: { page: page },
+      };
+    });
 }
 
 if (page.acf.page_settings?.add_redirect && page.acf.page_settings?.redirect_url) {
