@@ -2,12 +2,15 @@ import 'dotenv/config';
 
 const BASE_URL = process.env.SITE_DOMAIN;
 const WP_REST_URL_PREFIX = process.env.WP_REST_URL_PREFIX;
+const WP_ADMIN_LOGIN = process.env.WP_ADMIN_LOGIN;
+const WP_ADMIN_APPLICATION_PASSWORD = process.env.WP_ADMIN_APPLICATION_PASSWORD;
+const WP_MODE = process.env.WP_MODE;
 
-async function fetchApi(endpoint, params = {}) {
+async function fetchApi(endpoint, params = {}, headers = {}) {
   try {
     const queryString = new URLSearchParams(params).toString();
     const url = `${BASE_URL}${endpoint}${queryString ? `?${queryString}` : ''}`;
-    const response = await fetch(url);
+    const response = await fetch(url, headers);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -83,4 +86,14 @@ export async function getCategory(id) {
 
 export async function getOptionsInfo() {
   return fetchApi(`/${WP_REST_URL_PREFIX}/acf/v3/options/options/`);
+}
+
+export async function getDraftPages() {
+  const headers = WP_MODE !== 'PROD' ? {
+    headers: {
+      'Authorization': 'Basic ' + btoa(WP_ADMIN_LOGIN + ':' + WP_ADMIN_APPLICATION_PASSWORD),
+      'Content-Type': 'application/json'
+    }
+  } : {};
+  return fetchApi(`/${WP_REST_URL_PREFIX}/wp/v2/pages`, { status: 'draft' }, headers);
 }
