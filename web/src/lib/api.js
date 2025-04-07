@@ -89,11 +89,11 @@ export async function getOptionsInfo() {
 }
 
 export async function getDraftPages() {
-  const headers = WP_MODE !== 'PROD' ? {
+  const headers = {
     headers: {
       'Authorization': 'Basic ' + btoa(WP_ADMIN_LOGIN + ':' + WP_ADMIN_APPLICATION_PASSWORD),
       'Content-Type': 'application/json'
     }
-  } : {};
+  };
   return fetchApi(`/${WP_REST_URL_PREFIX}/wp/v2/pages`, { status: 'draft' }, headers);
 }

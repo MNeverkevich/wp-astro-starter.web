@@ -3,6 +3,7 @@ import { getDraftPages } from "../../lib/api";
 
 import Layout from '../../layouts/Layout.astro';
 import FlexibleContent from '../../components/FlexibleContent.astro';
+const WP_MODE = process.env.WP_MODE;
 
 const { slug } = Astro.params;
 const pages = await getDraftPages();
@@ -17,9 +18,14 @@ export async function getStaticPaths() {
     }));
 }
 
+if (WP_MODE === 'PROD') {
+  return Astro.redirect('/404');
+}
+
 if (page.acf.page_settings?.add_redirect && page.acf.page_settings?.redirect_url) {
   return Astro.redirect(page.acf.page_settings.redirect_url);
 }
+
 ---
 <Layout title={page.title.rendered} yoast_head={page.yoast_head} >
   <FlexibleContent page={page} />
