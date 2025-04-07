@@ -9,6 +9,13 @@ const page = Astro.props.page;
 
 <div class="main">
   {
+    page.content.rendered && (
+      <section class="py-24">
+        <div class="container" set:html={page.content.rendered}></div>
+      </section>
+    )
+  }
+  {
     page.acf.flexible_content.map((section: any) => {
       switch (section.acf_fc_layout) {
         case 'hero':
