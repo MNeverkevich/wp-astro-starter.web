@@ -24,9 +24,5 @@ require get_template_directory() . '/inc/flexible-content-preview.php';
 // ACF Settings
 require get_template_directory() . '/inc/acf-settings.php';
 
-// add_filter('preview_post_link', 'custom_preview_link', 10, 2);
-
-// function custom_preview_link($preview_link, $post) {
-//   $custom_link = '/preview/' . $post->post_name;
-//   return $custom_link;
-// }
+// Preview Draft
+require get_template_directory() . '/inc/preview-draft.php';

@@ -1,7 +1,8 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import 'dotenv/config';
-const BASE_URL = process.env.SITE_DOMAIN;
+const BASE_URL = process.env.SITE_DOMAIN || 'http://localhost:3000';
+const BASE_HOST = process.env.SITE_HOST || 'localhost';
 
 import tailwindcss from '@tailwindcss/vite';
 import playformCompress from '@playform/compress';
@@ -18,6 +19,7 @@ export default defineConfig({
   server: {
     port: 3000,
     host: true,
+    allowedHosts: [ BASE_HOST ]
   },
   output: 'static',
   integrations: [playformCompress()],
